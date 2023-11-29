@@ -15,6 +15,17 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
+gpus = tf.config.list_physical_devices('GPU')
+
+if gpus:
+    try:
+        tf.config.experimental.set_memory_growth(gpus[0], True)
+        # Restrict TensorFlow to only allocate 2GB of memory on the first GPU
+        # tf.config.experimental.set_virtual_device_configuration(
+        #     gpus[0],
+        #     [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=6048)])
+    except RuntimeError as e:
+        print(e)
 
 def load_image_pair(noisy_dir, clean_dir):
   noisy_imgs = sorted(os.listdir(noisy_dir))
@@ -46,7 +57,7 @@ def create_dataset(noisy_dir, clean_dir):
       tf.TensorSpec(shape=(256, 256, 3), dtype=tf.float32)
     )
   )
-  return dataset.batch(32).prefetch(tf.data.AUTOTUNE)
+  return dataset.batch(8).prefetch(tf.data.AUTOTUNE)
 
 train_dataset = create_dataset(train_noisy_dir, train_clean_dir)
 test_dataset = create_dataset(test_noisy_dir, test_clean_dir)
