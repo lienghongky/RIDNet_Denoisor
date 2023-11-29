@@ -57,7 +57,7 @@ def create_dataset(noisy_dir, clean_dir):
       tf.TensorSpec(shape=(256, 256, 3), dtype=tf.float32)
     )
   )
-  return dataset.batch(8).prefetch(tf.data.AUTOTUNE)
+  return dataset.batch(32).prefetch(tf.data.AUTOTUNE)
 
 train_dataset = create_dataset(train_noisy_dir, train_clean_dir)
 test_dataset = create_dataset(test_noisy_dir, test_clean_dir)
@@ -136,7 +136,7 @@ RIDNet = Model(input,out)
 RIDNet.compile(optimizer=tf.keras.optimizers.Adam(1e-03), loss=tf.keras.losses.MeanSquaredError())
 
 #traing for 20 epochs
-RIDNet.fit(train_dataset, epochs=10, validation_data=test_dataset)  
+RIDNet.fit(train_dataset, epochs=1, validation_data=test_dataset)  
 
 #save the model
 RIDNet.save('RIDNet.h5')
