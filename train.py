@@ -125,4 +125,14 @@ RIDNet = Model(input,out)
 RIDNet.compile(optimizer=tf.keras.optimizers.Adam(1e-03), loss=tf.keras.losses.MeanSquaredError())
 
 #traing for 20 epochs
-RIDNet.fit(train_dataset, epochs=20, validation_data=test_dataset)  
+RIDNet.fit(train_dataset, epochs=10, validation_data=test_dataset)  
+
+#save the model
+RIDNet.save('RIDNet.h5')
+
+# Load the model
+RIDNet = tf.keras.models.load_model('RIDNet.h5')
+
+# Evaluate the model
+result = RIDNet.evaluate(validation_dataset)
+print("Validation Loss:", result)
