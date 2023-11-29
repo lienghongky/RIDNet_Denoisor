@@ -14,6 +14,7 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.models import Model
 from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 gpus = tf.config.list_physical_devices('GPU')
 
@@ -24,6 +25,8 @@ if gpus:
         # tf.config.experimental.set_virtual_device_configuration(
         #     gpus[0],
         #     [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=6048)])
+
+        print("Physical GPU:", tf.config.list_physical_devices('GPU'))
     except RuntimeError as e:
         print(e)
 
@@ -135,15 +138,22 @@ out = Add()([conv2,input])
 RIDNet = Model(input,out)
 RIDNet.compile(optimizer=tf.keras.optimizers.Adam(1e-03), loss=tf.keras.losses.MeanSquaredError())
 
-#traing for 20 epochs
-RIDNet.fit(train_dataset, epochs=10, validation_data=test_dataset)  
 
-#save the model
-RIDNet.save('RIDNet.h5')
+# Define the checkpoint path
+checkpoint_path = 'model_checkpoints/weights.{epoch:02d}-{val_loss:.2f}.keras'
 
-# Load the model
-RIDNet = tf.keras.models.load_model('RIDNet.h5')
+# Create a ModelCheckpoint callback
+checkpoint_callback = ModelCheckpoint(checkpoint_path, save_weights_only=False, save_freq='epoch')
+
+# Train the model with the checkpoint callback
+RIDNet.fit(train_dataset, epochs=10, validation_data=test_dataset, callbacks=[checkpoint_callback])
+
+# Save the final model
+
+model_name = f'LATES_MODEL.keras'
+RIDNet.save(model_name)
 
 # Evaluate the model
 result = RIDNet.evaluate(validation_dataset)
 print("Validation Loss:", result)
+
