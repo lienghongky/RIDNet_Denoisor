@@ -47,8 +47,8 @@ random.shuffle(image_filenames)
 
 # Calculate the number of images for each set
 num_images = len(image_filenames)
-num_train = int(num_images * 0.8)
-num_test = int(num_images * 0.15)
+num_train = int(num_images * 0.9)
+num_test = int(num_images * 0.09)
 num_vali = num_images - num_train - num_test
 
 

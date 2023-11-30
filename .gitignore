@@ -4,3 +4,6 @@ dataset128/*
 !dataset128/
 env/
 tensortainer
+models/
+model_checkpoints/
+outputs/
