@@ -55,12 +55,24 @@ train_dataset = create_dataset(train_noisy_dir, train_clean_dir)
 test_dataset = create_dataset(test_noisy_dir, test_clean_dir)
 validation_dataset = create_dataset(validation_noisy_dir, validation_clean_dir)
 
+def combined_loss(y_true, y_pred):
+    # Compute the L1 loss
+    l1_loss = tf.reduce_mean(tf.abs(y_true - y_pred))
+    
+    # Compute the L2 loss
+    l2_loss = tf.reduce_mean(tf.square(y_true - y_pred))
+    
+    # Combine the L1 and L2 losses
+    combined = 1.0 * l1_loss + 0.8 *l2_loss
+
+
+    return combined
 RIDNet = RIDNetModel # Model(input,out)
-RIDNet.compile(optimizer=tf.keras.optimizers.Adam(1e-03), loss=tf.keras.losses.MeanSquaredError())
+# RIDNet.compile(optimizer=tf.keras.optimizers.Adam(1e-03), loss=tf.keras.losses.MeanSquaredError())
 # Load the model
-model_name = 'models/RIDNet.h5'
-model_name = 'model_checkpoints/weights.03-0.01.keras'
-RIDNet = tf.keras.models.load_model(model_name,custom_objects={'EAM':EAM})
+#model_name = 'models/RIDNet.h5'
+model_name = 'modelsv10_100k/weights.20-0.05.keras'
+RIDNet = tf.keras.models.load_model(model_name,custom_objects={'EAM':EAM,'combined_loss':combined_loss})
 
 
 # Create a directory to save the images
@@ -72,7 +84,7 @@ os.makedirs(save_dir, exist_ok=True)
 validation_image_paths = glob.glob(os.path.join(validation_noisy_dir, '*.png'))
 
 for i, image_path in enumerate(validation_image_paths):
-  if i >= 10:
+  if i >= 20:
     break
   print(image_path)
   # Load the noisy image
@@ -103,6 +115,9 @@ for i, image_path in enumerate(validation_image_paths):
   axes[1].imshow(noisy_image.astype('uint8'))
   axes[1].set_title('Noisy Image')
   axes[1].axis('off')
+  model_name_text = f"Model:vs4.model_20_100k(L1 + 0.8*L2)"
+  axes[1].text(denoised_image.shape[1]/2, denoised_image.shape[0] + 20, model_name_text, color='white', backgroundcolor='black', ha='center', va='bottom', fontsize=10)
+
   axes[2].imshow(denoised_image.astype('uint8'))
   axes[2].set_title('Denoised Image')
   axes[2].axis('off')
@@ -170,3 +185,18 @@ def calculate_average_pnsr_ssim():
 
   print("Average PSNR:", avg_psnr)
   print("Average SSIM:", avg_ssim)
+
+
+# ROOT
+# ├── dataset_all
+# ├── datasets
+# ├── requirements.txt
+# ├── preprocess.py
+# ├── train.py
+# ├── test.py
+# ├── evaluate.py
+# ├── env
+# ├── model_checkpoints
+# │   └── weights.17-0.01.keras
+# ├── models
+# └── outputs
