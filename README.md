@@ -1,4 +1,4 @@
-
+![Sample Image](./thm.png)
 <object data="./Image%20Denoisor%20v1.2023.12.16.pdf" type="application/pdf" width="700px" height="700px">
     <embed src="./Image%20Denoisor%20v1.2023.12.16.pdf">
         <p>This browser does not support PDFs. Please download the PDF to view it: <a href="./Image%20Denoisor%20v1.2023.12.16.pdf">Download PDF</a>.</p>
@@ -6,8 +6,9 @@
 </object>
 
 
-# RIDNet IMAGE DENOISOR
+# Enhanced RIDNet IMAGE DENOISOR
 ![Sample Image](./sample.png)
+
 
 
 
